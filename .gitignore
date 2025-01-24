@@ -1,0 +1,5 @@
+*.asc
+*.hdr
+*.raw
+*.png
+settings.json
