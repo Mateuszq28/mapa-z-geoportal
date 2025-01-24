@@ -100,11 +100,13 @@ level_out_arrays(array1, array2, array1_right_margin_avg, array2_left_margin_avg
 margins(array1, array2)
 print_diagnostics(array1, array2)
 
-# array1 = min_max_scale(array1)
-# array2 = min_max_scale(array2)
-
 margins(array1, array2)
 print_diagnostics(array1, array2)
+
+# Przesunięcie lewego sektora o 80 pikseli w górę + przycięcie
+offset = 60
+array1 = array1[offset:, :]
+array2 = array2[:-offset, :]
 
 # Łączenie sektorów
 combined_array = np.hstack((array1, array2))
