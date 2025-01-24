@@ -14,16 +14,13 @@ sektor2 = gdal.Open(sektor2_path)
 array1 = sektor1.ReadAsArray()
 array2 = sektor2.ReadAsArray()
 
-# Diagnostyka - wypisanie zakresów danych
+# Diagnostyka - zakresy danych
 print("Sektor 1 - min:", np.min(array1), "max:", np.max(array1))
 print("Sektor 2 - min:", np.min(array2), "max:", np.max(array2))
 
-# Zamiana wartości brakujących (jeśli są np. -9999)
-array1[array1 == -9999] = np.nan
-array1 = np.nan_to_num(array1, nan=np.mean(array1))
-
-array2[array2 == -9999] = np.nan
-array2 = np.nan_to_num(array2, nan=np.mean(array2))
+# Zamiana wartości brakujących (-9999) na zero
+array1[array1 == -9999] = 0
+array2[array2 == -9999] = 0
 
 # Przycinanie sektorów do najmniejszego wspólnego rozmiaru
 def cut_to_min_size(array1, array2):
@@ -33,22 +30,20 @@ def cut_to_min_size(array1, array2):
 
 array1, array2 = cut_to_min_size(array1, array2)
 
-# Normalizacja sektorów
-def normalize(array):
-    min_val = np.min(array)
-    max_val = np.max(array)
-    if max_val - min_val < 1e-3:  # Wymuszanie minimalnego zakresu
-        max_val = min_val + 1
-    return ((array - min_val) / (max_val - min_val) * 255).astype(np.uint8)
+# Twarde skalowanie wartości (zakres od 0 do 1000)
+def hard_scale(array, min_value=0, max_value=1000):
+    array = np.clip(array, min_value, max_value)
+    scaled_array = ((array - min_value) / (max_value - min_value) * 255).astype(np.uint8)
+    return scaled_array
 
-normalized_array1 = normalize(array1)
-normalized_array2 = normalize(array2)
+scaled_array1 = hard_scale(array1)
+scaled_array2 = hard_scale(array2)
 
-# Połączenie sektorów
-combined_array = np.hstack((normalized_array1, normalized_array2))
+# Łączenie sektorów
+combined_array = np.hstack((scaled_array1, scaled_array2))
 
 # Zapis jako PNG
 image = Image.fromarray(combined_array)
-image.save("combined_map_fixed.png")
+image.save("combined_map_hard_scaled.png")
 
-print("Eksport zakończony: combined_map_fixed.png")
+print("Eksport zakończony: combined_map_hard_scaled.png")
