@@ -3,6 +3,7 @@
 from osgeo import gdal, gdal_array
 import numpy as np
 import matplotlib.pyplot as plt
+from PIL import Image
 
 # Ścieżki do plików .asc
 sektor1_path = "dabrowa_lewo.asc" # sektor po lewej
@@ -41,6 +42,10 @@ def scale_array(array):
     scaled_array = ((combined_array - min_val) / (max_val - min_val) * 255).astype(np.uint8)
     return scaled_array
 combined_array = scale_array(combined_array)
+
+# Zapis do pliku PNG
+image = Image.fromarray(combined_array)
+image.save("combined_map_new.png")
 
 # Eksport jako PNG (mapa ciepła)
 plt.imshow(combined_array, cmap="hot", origin="lower")
