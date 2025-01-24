@@ -18,6 +18,11 @@ array2 = sektor2.ReadAsArray()
 print("Sektor 1 - min:", np.min(array1), "max:", np.max(array1))
 print("Sektor 2 - min:", np.min(array2), "max:", np.max(array2))
 
+# Diagnostyka - zakresy danych
+print("Po odrzuceniu -9999:")
+print("Sektor 1 - min:", np.min(array1[array1 > -9999]), "max:", np.max(array1[array1 > -9999]))
+print("Sektor 2 - min:", np.min(array2[array2 > -9999]), "max:", np.max(array2[array2 > -9999]))
+
 # Zamiana wartości brakujących (-9999) na zero
 array1[array1 == -9999] = 0
 array2[array2 == -9999] = 0
@@ -36,8 +41,16 @@ def hard_scale(array, min_value=0, max_value=1000):
     scaled_array = ((array - min_value) / (max_value - min_value) * 255).astype(np.uint8)
     return scaled_array
 
-scaled_array1 = hard_scale(array1)
-scaled_array2 = hard_scale(array2)
+# scaled_array1 = hard_scale(array1)
+# scaled_array2 = hard_scale(array2)
+
+def min_max_scale(array, min_value=0, max_value=255):
+    array = np.clip(array, min_value, max_value)
+    scaled_array = ((array - min(array.flatten())) / (max(array.flatten()) - min(array.flatten())) * 255).astype(np.uint8)
+    return scaled_array
+
+scaled_array1 = min_max_scale(array1)
+scaled_array2 = min_max_scale(array2)
 
 # Łączenie sektorów
 combined_array = np.hstack((scaled_array1, scaled_array2))
