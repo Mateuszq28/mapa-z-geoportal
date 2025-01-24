@@ -49,7 +49,7 @@ array2 = crop_margin(array2)
 # Twarde skalowanie wartości (zakres od 0 do 1000)
 def hard_scale(array, min_value=0, max_value=1000):
     array = np.clip(array, min_value, max_value)
-    scaled_array = ((array - min_value) / (max_value - min_value) * 255).astype(np.uint16)
+    scaled_array = ((array - min_value) / (max_value - min_value) * 255)
     return scaled_array
 
 # array1 = hard_scale(array1)
@@ -70,15 +70,15 @@ print_diagnostics(array1, array2)
 
 def min_max_scale(array, min_value=0, max_value=255):
     array = np.clip(array, min_value, max_value)
-    scaled_array = ((array - min(array.flatten())) / (max(array.flatten()) - min(array.flatten())) * 255).astype(np.uint16)
+    scaled_array = ((array - min(array.flatten())) / (max(array.flatten()) - min(array.flatten())) * 255)
     return scaled_array
 
 array1 = min_max_scale(array1)
 array2 = min_max_scale(array2)
 
 def margins(array1, array2):
-    array1_right_margin_avg = np.mean(array1[:, -30:]).astype(np.int16)
-    array2_left_margin_avg = np.mean(array2[:, :30]).astype(np.int16)
+    array1_right_margin_avg = np.mean(array1[:, -30:])
+    array2_left_margin_avg = np.mean(array2[:, :30])
     print("array1_right_margin_avg:", array1_right_margin_avg)
     print("array2_left_margin_avg:", array2_left_margin_avg)
     print(type(array1_right_margin_avg))
@@ -108,7 +108,8 @@ print_diagnostics(array1, array2)
 
 # Łączenie sektorów
 combined_array = np.hstack((array1, array2))
-combined_array = min_max_scale(combined_array)
+combined_array = min_max_scale(combined_array).astype(np.uint8)
+print_diagnostics(combined_array, combined_array)
 
 # Zapis jako PNG
 image = Image.fromarray(combined_array)
